@@ -23,8 +23,7 @@ void setup() {
 
 
   // Create Tasks
-
-	taskid_t dfplayer_t = taskManager.scheduleOnce( 0, [] {
+  taskid_t dfplayer_t = taskManager.scheduleOnce( 0, [] {
     Serial.println("Setting volume to max");
     myMP3.volume(30);
     Serial.print("play first track 001.mp3");
@@ -48,15 +47,17 @@ void setup() {
 }
 
 void loop() {
+ 
+  // presence detection loop ( 10hz)
+  if ( millis() - timer_pres >= 100) {
+    timer_pres = millis();
+    presenceController();
+  }
+
   // run taskManager only when show is running
   if (isRunning) {
     taskManager.runLoop();
   }
- 
-  // presence detection loop ( 10hz)
-  if ( millis() - timer_pres >= 100)
-    timer_pres = millis();
-    checkPresence();
 }
 
 
@@ -68,27 +69,29 @@ void stopAll() {
   myMP3.stop();
 
   // stop motors
+  // todo
 
   // shutdown lights
+  // todo
 
   // reset taskManager
   taskManager.reset();
-
-
 }
 
-void checkPresence() {
+void presenceController() {
   presence = digitalRead(irSensorPin);
 
   if (!presence) {
     if (isRunning) {
       lastSeen = millis();
-    }
-    // check if there's nobody since x sec and if show is running )
-    else if (lastSeen >= waitBeforeReset * 1000) {
+
+      // check if there's nobody since x sec
+      if (lastSeen >= waitBeforeReset * 1000) {
         // reset to waiting state
         stopAll();
+      }
     }
+
   }
   else {
     lastSeen = 0;
