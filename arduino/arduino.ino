@@ -1,9 +1,19 @@
 
 #include "define.h" // config section
-#include <Arduino.h>
+#include "headers.h"
+
+// import Libraries
 #include <TaskManagerIO.h>
 #include <DFPlayerMini_Fast.h>
 #include <SoftwareSerial.h>
+
+
+// global variables, do not edit
+uint32_t lastSeen = 99999; // last time in ms since the IR sensor has not been HIGH
+uint32_t timer_pres = 0; // timer for presence loop
+bool presence = false;     // presence state
+bool isRunning = false;    // is device currently running
+
 
 // instanciate Objects
 SoftwareSerial mySerial(softSerialRxPin, softSerialTxPin); 
@@ -20,29 +30,30 @@ void setup() {
   mySerial.begin(9600);
   myMP3.begin(mySerial, true);
   delay(1000); // wait 1 sec for dfplayer to initialise
-
+  //Led setup
+  setupLeds();
 
   // Create Tasks
-  taskid_t dfplayer_t = taskManager.scheduleOnce( 0, [] {
+
+  taskid_t ledCtrl_t = taskManager.schedule(repeatMillis(20), [] {
+		// led controller refreshing at 50hz
+    ledController();
+	});
+
+
+  taskid_t mainTask_t = taskManager.scheduleOnce( 0, [] {
     Serial.println("Setting volume to max");
     myMP3.volume(30);
     Serial.print("play first track 001.mp3");
     myMP3.play(1);
 	});
 
-  taskid_t motor_t = taskManager.scheduleOnce( 10000, [] {
-	  Serial.print("first motor task");
-	});
-  motor_t = taskManager.scheduleOnce( 20000, [] {
-	  Serial.print("second motor task");
+  mainTask_t = taskManager.scheduleOnce( 10000, [] {
+    setLeds(125, 3000);
 	});
 
-  taskid_t light_t = taskManager.scheduleOnce( 10000, [] {
-	  Serial.print("first light task");
-	});
-
-  light_t = taskManager.scheduleOnce( 25000, [] {
-	  Serial.print("second light task");
+  mainTask_t = taskManager.scheduleOnce( 13000, [] {
+    setLeds(55, 4000);
 	});
 }
 
@@ -72,7 +83,7 @@ void stopAll() {
   // todo
 
   // shutdown lights
-  // todo
+  digitalWrite(ledPin,0);
 
   // reset taskManager
   taskManager.reset();
