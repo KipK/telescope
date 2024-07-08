@@ -41,6 +41,10 @@ void setup() {
   // Create Tasks
   addShowTasks();
 
+#ifdef DEBUG
+  Serial.println("Waiting for presence to start");
+#endif
+
 }
 
 void loop() {

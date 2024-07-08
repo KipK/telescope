@@ -44,4 +44,7 @@ void setLeds(uint8_t pwm, uint32_t trans_t) {
 	led_pwm_sp = pwm;
 	led_trans_t = trans_t;
 	led_is_trans = true;
+#ifdef DEBUG
+	Serial.println("set motor pwm to " + led_pwm_sp);
+#endif
 }

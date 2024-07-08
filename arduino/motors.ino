@@ -54,4 +54,7 @@ void setMotors(int8_t pwm, uint32_t trans_t) { // pwm, direction 0: backward 1: 
 	motor_pwm_sp = pwm;
 	motor_trans_t = trans_t;
 	motor_is_trans = true;
+#ifdef DEBUG
+	 Serial.println("set motor pwm to " + motor_pwm_sp);
+#endif
 }
