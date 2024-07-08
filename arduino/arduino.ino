@@ -16,7 +16,7 @@ bool isRunning = false;    // is device currently running
 
 
 // instanciate Objects
-SoftwareSerial mySerial(softSerialRxPin, softSerialTxPin); 
+SoftwareSerial mySerial(SOFTSERIALRXPIN, SOFTSERIALTXPIN); 
 DFPlayerMini_Fast myMP3;
 
 
@@ -30,8 +30,10 @@ void setup() {
   mySerial.begin(9600);
   myMP3.begin(mySerial, true);
   delay(1000); // wait 1 sec for dfplayer to initialise
-  //Led setup
+  // Led setup
   setupLeds();
+  // set IR pin as input
+  pinMode(IRSENSORPIN, INPUT); 
 
   // Create Tasks
 
@@ -48,11 +50,11 @@ void setup() {
     myMP3.play(1);
 	});
 
-  mainTask_t = taskManager.scheduleOnce( 10000, [] {
+  mainTask_t = taskManager.scheduleOnce(10000-AUDIOSTARTDELAY, [] {
     setLeds(125, 3000);
 	});
 
-  mainTask_t = taskManager.scheduleOnce( 13000, [] {
+  mainTask_t = taskManager.scheduleOnce( 13000-AUDIOSTARTDELAY, [] {
     setLeds(55, 4000);
 	});
 }
@@ -83,21 +85,21 @@ void stopAll() {
   // todo
 
   // shutdown lights
-  digitalWrite(ledPin,0);
+  digitalWrite(LEDPIN,0);
 
   // reset taskManager
   taskManager.reset();
 }
 
 void presenceController() {
-  presence = digitalRead(irSensorPin);
+  presence = digitalRead(IRSENSORPIN);
 
   if (!presence) {
     if (isRunning) {
       lastSeen = millis();
 
       // check if there's nobody since x sec
-      if (lastSeen >= waitBeforeReset * 1000) {
+      if (lastSeen >= WAITBEFORERESET * 1000) {
         // reset to waiting state
         stopAll();
       }

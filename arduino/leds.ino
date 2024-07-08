@@ -9,8 +9,8 @@ bool led_is_trans = false; // are we in transition phase
 uint32_t led_timer = 0;
 
 void setupLeds() {
-	pinMode(ledPin, OUTPUT);  // sets the led pin as output	
-	digitalWrite(ledPin, 0);
+	pinMode(LEDPIN, OUTPUT);  // sets the led pin as output	
+	digitalWrite(LEDPIN, 0);
 }
 
 void ledController() {
@@ -34,10 +34,11 @@ void ledController() {
 			led_pwm_cur = led_pwm_sp;
 		}
 	}
-	digitalWrite(ledPin,led_pwm_cur);
+	digitalWrite(LEDPIN,led_pwm_cur);
 }
 
 void setLeds(uint8_t pwm, uint32_t trans_t) {
+    // pwm 0-254 , trans_t in ms
 	led_pwm_sp = pwm;
 	led_trans_t = trans_t;
 	led_is_trans = true;
