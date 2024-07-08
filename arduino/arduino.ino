@@ -133,9 +133,9 @@ void addShowTasks() {
   taskid_t motorCtrl_t = taskManager.schedule(repeatMillis(20), [] {
 		// controle des moteurs à 50hz
     motorController();
+    motor2Controller();
 	});
 
- ////// Tâches du show, Editer ici \\\\//
   taskid_t mainTask_t = taskManager.scheduleOnce( 0, [] {
   #ifdef DEBUG
     Serial.println("Setting volume to max");
@@ -147,20 +147,24 @@ void addShowTasks() {
   #endif
 	});
 
-  // modèle: 
+  ////// Tâches du show, Editer ici \\\\//
+  //______________________________________
+  // Modèle: 
   // mainTask_t = taskManager.scheduleOnce({timecode} + AUDIOSTARTDELAY, [] { // CHOSES A FAIRE ICI // });
+  //
+  // Fonctions:
   // setLeds(pwm 0/254, transition time in ms)
-  // setMotors(pwm -125/125, transition time in ms)
+  // setMotors( motor number 1-2, pwm -127/127, transition time in ms)
 
   mainTask_t = taskManager.scheduleOnce(2000+AUDIOSTARTDELAY, [] {
     setLeds(125, 3000);
-    setMotors(60, 3000);
-
+    setMotors(1,60, 3000);
 	});
 
   mainTask_t = taskManager.scheduleOnce( 8000+AUDIOSTARTDELAY, [] {
     setLeds(55, 4000);
-    setMotors(-110, 8000);
+    setMotors(1,-110, 8000);
+    setMotors(2,55, 8000);
 	});
 
   // Fin du show
