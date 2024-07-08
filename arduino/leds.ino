@@ -10,7 +10,7 @@ uint32_t led_timer = 0;
 
 void setupLeds() {
 	pinMode(LEDPIN, OUTPUT);  // sets the led pin as output	
-	digitalWrite(LEDPIN, 0);
+	analogWrite(LEDPIN, 0);
 }
 
 void ledController() {
@@ -35,11 +35,7 @@ void ledController() {
 		}
 		
 	}
-	digitalWrite(LEDPIN,led_pwm_cur);
-#ifdef DEBUG
-	Serial.print("led: ");
-	Serial.println(led_pwm_cur);
-#endif
+	analogWrite(LEDPIN,led_pwm_cur);
 
 }
 
