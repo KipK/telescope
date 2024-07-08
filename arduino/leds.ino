@@ -35,6 +35,11 @@ void ledController() {
 		}
 	}
 	digitalWrite(LEDPIN,led_pwm_cur);
+#ifdef DEBUG
+	Serial.print("led: ");
+	Serial.println(led_pwm_cur);
+#endif
+
 }
 
 void setLeds(uint8_t pwm, uint32_t trans_t) {

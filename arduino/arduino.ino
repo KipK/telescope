@@ -44,18 +44,28 @@ void setup() {
 
 
   taskid_t mainTask_t = taskManager.scheduleOnce( 0, [] {
+  #ifdef DEBUG
     Serial.println("Setting volume to max");
+  #endif
     myMP3.volume(30);
-    Serial.print("play first track 001.mp3");
+  #ifdef DEBUG
+    Serial.println("playing first track 001.mp3");
+  #endif
     myMP3.play(1);
 	});
 
-  mainTask_t = taskManager.scheduleOnce(10000-AUDIOSTARTDELAY, [] {
+  mainTask_t = taskManager.scheduleOnce(2000-AUDIOSTARTDELAY, [] {
     setLeds(125, 3000);
+  #ifdef DEBUG
+    Serial.println("set leds to 125");
+  #endif
 	});
 
-  mainTask_t = taskManager.scheduleOnce( 13000-AUDIOSTARTDELAY, [] {
+  mainTask_t = taskManager.scheduleOnce( 8000-AUDIOSTARTDELAY, [] {
     setLeds(55, 4000);
+  #ifdef DEBUG
+    Serial.println("set leds to 55");
+  #endif
 	});
 }
 
@@ -70,7 +80,13 @@ void loop() {
   // run taskManager only when show is running
   if (isRunning) {
     taskManager.runLoop();
+      if (!myMP3.isPlaying()) {
+        stopAll();
+      }
   }
+
+
+
 }
 
 
@@ -102,6 +118,7 @@ void presenceController() {
       if (lastSeen >= WAITBEFORERESET * 1000) {
         // reset to waiting state
         stopAll();
+        lastSeen = 0;
       }
     }
 
