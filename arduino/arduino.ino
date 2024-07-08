@@ -124,7 +124,7 @@ void presenceController() {
 
 
 void addShowTasks() {
-  ////// Tâches système ne pas éditer \\\\\\\\
+  ////// Tâches système ne pas éditer \\\\\\//
   taskid_t ledCtrl_t = taskManager.schedule(repeatMillis(20), [] {
   // contrôle des leds à 50hz
   ledController();
@@ -135,7 +135,7 @@ void addShowTasks() {
     motorController();
 	});
 
- ////// Tâches du show, Editer ici \\\\\\
+ ////// Tâches du show, Editer ici \\\\//
   taskid_t mainTask_t = taskManager.scheduleOnce( 0, [] {
   #ifdef DEBUG
     Serial.println("Setting volume to max");
