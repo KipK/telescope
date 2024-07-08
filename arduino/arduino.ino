@@ -2,43 +2,42 @@
 #include "define.h" // config section
 #include "headers.h"
 
-// import Libraries
+// import Librairies
 #include <TaskManagerIO.h>
 #include <DFPlayerMini_Fast.h>
 #include <SoftwareSerial.h>
 
 
-// global variables, do not edit
+// global variables globale, ne pas editer
 bool presence = false;     // presence state
 bool presence_prev = false;       // previous presence reading
 bool isRunning = false;    // is device currently running
 uint32_t timer_pres = 0;
 
-// instanciate Objects
 SoftwareSerial mySerial(SOFTSERIALRXPIN, SOFTSERIALTXPIN); 
 DFPlayerMini_Fast myMP3;
 
 
 void setup() {
-  // initialise components
 
   // serial for debug
   Serial.begin(115200);
 
-  // soft serial for dfplayer
+  // activer le soft serial pour dfplayer
   mySerial.begin(9600);
+  // dfplayer
   myMP3.begin(mySerial, true);
   delay(1000); // wait 1 sec for dfplayer to initialise
-  // Led setup
+  // setup Leds
   setupLeds();
-  // set IR pin as input
+  // Pin IR sur entrée
   pinMode(IRSENSORPIN, INPUT); 
   digitalWrite(IRSENSORPIN, LOW);
 
-  // Motors setup
+  // setup moteur
   setupMotors();
 
-  // Create Tasks
+  // Créer les tâches
   addShowTasks();
 
 #ifdef DEBUG
@@ -49,13 +48,13 @@ void setup() {
 
 void loop() {
  
-  // presence detection loop ( 10hz)
+  // boucle détection de présence ( 10hz)
   if ( millis() - timer_pres >= 100) {
     timer_pres = millis();
     presenceController();
   }
 
-  // run taskManager only when show is running
+  // faire tourner taskManager seulement quand le show est en cours
   if (isRunning) {
     taskManager.runLoop();
       // if (!myMP3.isPlaying()) {
@@ -68,7 +67,7 @@ void loop() {
 }
 
 
-// functions
+// fonctions
 
 void stopAll() {
 #ifdef DEBUG
@@ -76,16 +75,16 @@ void stopAll() {
 #endif
   isRunning = false;
 
-  // stop music
+  // Arrêt musique
   myMP3.stop();
 
-  // stop motors
+  // Arrêt moteur
   stopMotors();
-  // shutdown lights
+  // Arrêt leds
   stopLeds();
     // reset taskManager
   taskManager.reset();
-  // readd tasks
+  // Ajout des tâches
   addShowTasks();
 
 }
@@ -125,27 +124,33 @@ void presenceController() {
 
 
 void addShowTasks() {
-
-	  taskid_t ledCtrl_t = taskManager.schedule(repeatMillis(20), [] {
-		// led controller refreshing at 50hz
-    ledController();
+  ////// Tâches système ne pas éditer \\\\\\\\
+  taskid_t ledCtrl_t = taskManager.schedule(repeatMillis(20), [] {
+  // contrôle des leds à 50hz
+  ledController();
 	});
 
   taskid_t motorCtrl_t = taskManager.schedule(repeatMillis(20), [] {
-		// motor controller refreshing at 50hz
+		// controle des moteurs à 50hz
     motorController();
 	});
 
+ ////// Tâches du show, Editer ici \\\\\\
   taskid_t mainTask_t = taskManager.scheduleOnce( 0, [] {
   #ifdef DEBUG
     Serial.println("Setting volume to max");
   #endif
-    myMP3.volume(30);
+    myMP3.volume(30); // min 0 - 30 max
     myMP3.play(1);
       #ifdef DEBUG
     Serial.println("audio track 001.mp3 started");
   #endif
 	});
+
+  // modèle: 
+  // mainTask_t = taskManager.scheduleOnce({timecode} + AUDIOSTARTDELAY, [] { // CHOSES A FAIRE ICI // });
+  // setLeds(pwm 0/254, transition time in ms)
+  // setMotors(pwm -125/125, transition time in ms)
 
   mainTask_t = taskManager.scheduleOnce(2000+AUDIOSTARTDELAY, [] {
     setLeds(125, 3000);
@@ -158,7 +163,7 @@ void addShowTasks() {
     setMotors(-110, 8000);
 	});
 
-  // Show end
+  // Fin du show
   mainTask_t = taskManager.scheduleOnce( (AUDIODURATION * 1000) + AUDIOSTARTDELAY, [] {
     stopAll();
 	});

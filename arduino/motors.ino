@@ -16,7 +16,7 @@ void setupMotors() {
 }
 
 void motorController() {
-	// calculate motor pwm
+	// calculer pwm moteur
 	if (motor_is_trans) {
 		motor_timer += 20;
 		if (motor_timer <= motor_trans_t) {
