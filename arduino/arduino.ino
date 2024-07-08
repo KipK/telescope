@@ -117,6 +117,9 @@ void presenceController() {
       // check if there's nobody since x sec
       if (lastSeen >= WAITBEFORERESET * 1000) {
         // reset to waiting state
+#ifdef DEBUG
+        Serial.println("Arrêt, pas de présence depuis 5s");
+#endif
         stopAll();
         lastSeen = 0;
       }
@@ -127,6 +130,9 @@ void presenceController() {
     lastSeen = 0;
     if (!isRunning) {
       isRunning = true;
+#ifdef DEBUG
+      Serial.println("Présence, démarrage");
+#endif   
     }
   }
 }
