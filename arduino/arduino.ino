@@ -80,9 +80,9 @@ void loop() {
   // run taskManager only when show is running
   if (isRunning) {
     taskManager.runLoop();
-      if (!myMP3.isPlaying()) {
-        stopAll();
-      }
+      // if (!myMP3.isPlaying()) {
+      //   stopAll();
+      // }
   }
 
 
@@ -93,6 +93,9 @@ void loop() {
 // functions
 
 void stopAll() {
+#ifdef DEBUG
+  Serial.println("stop all");
+#endif
   isRunning = false;
   // stop music
   myMP3.stop();

@@ -15,24 +15,25 @@ void setupLeds() {
 
 void ledController() {
 	if (led_is_trans) {
-		if (!led_timer) {
-			led_timer = millis();
-		}
-		
-		if (millis() - led_timer <= led_trans_t) {
+		led_timer += 20;
+		if (led_timer <= led_trans_t) {
 			//transition
 			if (!led_pwm_start) {
 				led_pwm_start = led_pwm_cur;
 			}
-			led_pwm_cur = map(led_pwm_cur, millis() - led_timer, led_trans_t, led_pwm_start, led_pwm_sp);
+			led_pwm_cur = map(led_timer, 0, led_trans_t, led_pwm_start, led_pwm_sp);
 		}
 		else {
 			// transition end, reinitialise vars
+#ifdef DEBUG
+			Serial.println("end led transition");
+#endif
 			led_timer = 0;
 			led_pwm_start = 0;
 			led_is_trans = false;
 			led_pwm_cur = led_pwm_sp;
 		}
+		
 	}
 	digitalWrite(LEDPIN,led_pwm_cur);
 #ifdef DEBUG
