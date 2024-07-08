@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "define.h"
 
-uint8_t led_pwm_cur = 0; // current pwm value
+uint8_t led_pwm_cur;
 uint8_t led_pwm_start = 0; // starting pwm value
 uint8_t led_pwm_sp = 0;  // set point pwm value
 uint32_t led_trans_t = 0; // transition duration for current task
@@ -45,6 +45,13 @@ void setLeds(uint8_t pwm, uint32_t trans_t) {
 	led_trans_t = trans_t;
 	led_is_trans = true;
 #ifdef DEBUG
-	Serial.println("set motor pwm to " + led_pwm_sp);
+	Serial.print("set leds pwm to ");
+	Serial.println(led_pwm_sp);
 #endif
+}
+
+void stopLeds() {
+	analogWrite(LEDPIN,0);
+	led_pwm_cur = 0;
+
 }

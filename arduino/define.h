@@ -8,3 +8,4 @@
 #define WAITBEFORESTOP 5 // show stop when presence is LOW for x sec
 #define WAITBEFORESTART 1 // show starts when presence is HIGH for x sec
 #define AUDIOSTARTDELAY 0 // time in ms it takes for audio to start
+#define AUDIODURATION 30 // mp3 track duration in sec

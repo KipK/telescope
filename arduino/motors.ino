@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "define.h"
 
-uint8_t motor_pwm_cur = 0; // current pwm value
+uint8_t motor_pwm_cur; 
 uint8_t motor_pwm_start = 0; // starting pwm value
 uint8_t motor_pwm_sp = 0;  // set point pwm value
 uint32_t motor_trans_t = 0; // transition duration for current task
@@ -55,6 +55,13 @@ void setMotors(int8_t pwm, uint32_t trans_t) { // pwm, direction 0: backward 1: 
 	motor_trans_t = trans_t;
 	motor_is_trans = true;
 #ifdef DEBUG
-	 Serial.println("set motor pwm to " + motor_pwm_sp);
+	Serial.print("set motor pwm to ");
+	Serial.println(motor_pwm_sp);
 #endif
+}
+
+void stopMotors() {
+	analogWrite(MOTORPWMPIN,0);
+	digitalWrite(MOTORDIRECTIONPIN,HIGH);
+	motor_pwm_cur = 0;
 }

@@ -80,11 +80,9 @@ void stopAll() {
   myMP3.stop();
 
   // stop motors
-  analogWrite(MOTORDIRECTIONPIN, 0);
-
+  stopMotors();
   // shutdown lights
-  analogWrite(LEDPIN,0);
-
+  stopLeds();
     // reset taskManager
   taskManager.reset();
   // readd tasks
@@ -143,20 +141,25 @@ void addShowTasks() {
     Serial.println("Setting volume to max");
   #endif
     myMP3.volume(30);
-  #ifdef DEBUG
-    Serial.println("playing first track 001.mp3");
-  #endif
     myMP3.play(1);
+      #ifdef DEBUG
+    Serial.println("audio track 001.mp3 started");
+  #endif
 	});
 
-  mainTask_t = taskManager.scheduleOnce(2000-AUDIOSTARTDELAY, [] {
+  mainTask_t = taskManager.scheduleOnce(2000+AUDIOSTARTDELAY, [] {
     setLeds(125, 3000);
     setMotors(60, 3000);
 
 	});
 
-  mainTask_t = taskManager.scheduleOnce( 8000-AUDIOSTARTDELAY, [] {
+  mainTask_t = taskManager.scheduleOnce( 8000+AUDIOSTARTDELAY, [] {
     setLeds(55, 4000);
     setMotors(-110, 8000);
+	});
+
+  // Show end
+  mainTask_t = taskManager.scheduleOnce( (AUDIODURATION * 1000) + AUDIOSTARTDELAY, [] {
+    stopAll();
 	});
 }
