@@ -28,6 +28,11 @@ void setup() {
   // dfplayer
   myMP3.begin(mySerial, true);
   delay(1000); // wait 1 sec for dfplayer to initialise
+  Serial.print("dfplayer firmware: ");
+  Serial.println(myMP3.currentVersion());
+  Serial.print("dfplayer: nombre de pistes: ");
+  Serial.println(myMP3.numSdTracks());
+
   // setup Leds
   setupLeds();
   // Pin IR sur entrée
