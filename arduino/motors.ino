@@ -1,16 +1,16 @@
 #include <Arduino.h>
 #include "define.h"
 
-uint8_t motor_pwm_cur; 
-uint8_t motor_pwm_start = 0; // starting pwm value
-uint8_t motor_pwm_sp = 0;  // set point pwm value
+int motor_pwm_cur; 
+int motor_pwm_start = 0; // starting pwm value
+int motor_pwm_sp = 0;  // set point pwm value
 uint32_t motor_trans_t = 0; // transition duration for current task
 bool motor_is_trans = false; // are we in transition phase
 uint32_t motor_timer = 0;
 
-uint8_t motor2_pwm_cur; 
-uint8_t motor2_pwm_start = 0; // starting pwm value
-uint8_t motor2_pwm_sp = 0;  // set point pwm value
+int motor2_pwm_cur; 
+int motor2_pwm_start = 0; // starting pwm value
+int motor2_pwm_sp = 0;  // set point pwm value
 uint32_t motor2_trans_t = 0; // transition duration for current task
 bool motor2_is_trans = false; // are we in transition phase
 uint32_t motor2_timer = 0;
@@ -51,13 +51,13 @@ void motorController() {
 		
 	}
 	// set direction
-	if (motor_pwm_sp >= 0) {
+	if (motor_pwm_cur >= 0) {
 		digitalWrite(MOTORDIRECTIONPIN, HIGH);
 	}
 	else {
 		digitalWrite(MOTORDIRECTIONPIN, LOW);
 	}
-	analogWrite(MOTORPWMPIN,abs(motor_pwm_cur)*2);
+	analogWrite(MOTORPWMPIN,abs(motor_pwm_cur));
 
 }
 
@@ -85,7 +85,7 @@ void motor2Controller() {
 		
 	}
 	// set direction
-	if (motor2_pwm_sp >= 0) {
+	if (motor2_pwm_cur >= 0) {
 		digitalWrite(MOTOR2DIRECTIONPIN, HIGH);
 	}
 	else {
@@ -94,7 +94,7 @@ void motor2Controller() {
 	analogWrite(MOTOR2PWMPIN,abs(motor2_pwm_cur)*2);
 
 }
-void setMotors(uint8_t motor_n, int8_t pwm, uint32_t trans_t) { // motor number, pwm, direction 0: backward 1: forward, transition time 
+void setMotors(uint8_t motor_n, int pwm,  uint32_t trans_t) { // motor number, pwm, direction 0: backward 1: forward, transition time 
     // pwm 0-254 , trans_t in ms
 	if (motor_n == 1) {
 		motor_pwm_sp = pwm;
