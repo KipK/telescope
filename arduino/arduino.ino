@@ -97,14 +97,14 @@ void presenceController() {
       if (!timer_t) {
         timer_t = millis();
       }
-      if (millis() - timer_t >= WAITBEFORESTART * 1000) {
-        isRunning = true;
-        presence_prev = presence;
-        timer_t = 0;
-  #ifdef DEBUG
-        Serial.println("starting show");
-  #endif
-      }
+    }
+    if (millis() - timer_t >= WAITBEFORESTART * 1000) {
+      isRunning = true;
+      presence_prev = presence;
+      timer_t = 0;
+#ifdef DEBUG
+      Serial.println("starting show");
+#endif
     }
   }
   else { // no presence
@@ -112,11 +112,11 @@ void presenceController() {
       if (!timer_t) {
         timer_t = millis();
       }
-      if (millis() - timer_t >= WAITBEFORESTOP * 1000) {
-        stopAll();
-        presence_prev = presence;
-        timer_t = 0;
-      }
+    }
+    if (millis() - timer_t >= WAITBEFORESTOP * 1000) {
+      stopAll();
+      presence_prev = presence;
+      timer_t = 0;
     }
   }
 }
@@ -154,7 +154,7 @@ void addShowTasks() {
   //
   // Fonctions:
   // setLeds(pwm 0/254, transition time in ms)
-  // setMotors( motor number 1-2, pwm -127/127, transition time in ms)
+  // setMotors( motor number 1-2, pwm -254/254, transition time in ms)
 
   mainTask_t = taskManager.scheduleOnce(2000+AUDIOSTARTDELAY, [] {
     setLeds(125, 3000);
