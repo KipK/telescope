@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "define.h"
 
+
 int motor_pwm_cur; 
 int motor_pwm_start = 0; // starting pwm value
 int motor_pwm_sp = 0;  // set point pwm value
@@ -16,6 +17,9 @@ bool motor2_is_trans = false; // are we in transition phase
 uint32_t motor2_timer = 0;
 
 void setupMotors() {
+	setPwmFrequency(MOTORPWMPIN,MOTORREGISTERDIVISOR);
+	setPwmFrequency(MOTOR2PWMPIN,MOTOR2REGISTERDIVISOR);
+
 	pinMode(MOTORPWMPIN, OUTPUT);  // sets the led pin as output	
 	analogWrite(MOTORPWMPIN, 0);
 	pinMode(MOTORDIRECTIONPIN, OUTPUT);  // sets the led pin as output	

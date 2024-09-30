@@ -9,6 +9,7 @@ bool led_is_trans = false; // are we in transition phase
 uint32_t led_timer = 0;
 
 void setupLeds() {
+	setPwmFrequency(LEDPIN,LEDREGISTERDIVISOR);
 	pinMode(LEDPIN, OUTPUT);  // sets the led pin as output	
 	analogWrite(LEDPIN, 0);
 }
