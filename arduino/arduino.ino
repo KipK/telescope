@@ -96,7 +96,7 @@ void stopAll() {
 
 void presenceController() {
   static uint32_t timer_t = 0;
-  presence = digitalRead(IRSENSORPIN);
+  presence = !digitalRead(IRSENSORPIN);
   if (presence) { //presence
     if (presence_prev != presence) {
       if (!timer_t) {
