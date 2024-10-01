@@ -9,7 +9,6 @@ bool led_is_trans = false; // are we in transition phase
 uint32_t led_timer = 0;
 
 void setupLeds() {
-	setPwmFrequency(LEDPIN,LEDREGISTERDIVISOR);
 	pinMode(LEDPIN, OUTPUT);  // sets the led pin as output	
 	analogWrite(LEDPIN, 0);
 }
@@ -27,7 +26,9 @@ void ledController() {
 		else {
 			// transition end, reinitialise vars
 #ifdef DEBUG
+#ifndef HARDWARESERIAL
 			Serial.println("end led transition");
+#endif
 #endif
 			led_timer = 0;
 			led_pwm_start = 0;
@@ -46,8 +47,10 @@ void setLeds(uint8_t pwm, uint32_t trans_t) {
 	led_trans_t = trans_t;
 	led_is_trans = true;
 #ifdef DEBUG
+#ifndef HARDWARESERIAL
 	Serial.print("set leds pwm to ");
 	Serial.println(led_pwm_sp);
+#endif
 #endif
 }
 

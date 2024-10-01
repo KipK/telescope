@@ -14,24 +14,38 @@ bool presence_prev = false;       // previous presence reading
 bool isRunning = false;    // is device currently running
 uint32_t timer_pres = 0;
 
+#ifndef HARDWARESERIAL
 SoftwareSerial mySerial(SOFTSERIALRXPIN, SOFTSERIALTXPIN); 
-DFPlayerMini_Fast myMP3;
+#endif
 
+DFPlayerMini_Fast myMP3;
 
 void setup() {
 
   // serial for debug
+  #ifndef HARDWARESERIAL
   Serial.begin(115200);
+  #else
+  Serial.begin(9600);
+  #endif
 
   // activer le soft serial pour dfplayer
+  #ifndef HARDWARESERIAL
   mySerial.begin(9600);
+  #endif
   // dfplayer
+  #ifndef HARDWARESERIAL
   myMP3.begin(mySerial, true);
+  #else
+  myMP3.begin(Serial, true);
+  #endif
   delay(1000); // wait 1 sec for dfplayer to initialise
+  #ifndef HARDWARESERIAL
   Serial.print("dfplayer firmware: ");
   Serial.println(myMP3.currentVersion());
   Serial.print("dfplayer: nombre de pistes: ");
   Serial.println(myMP3.numSdTracks());
+  #endif
 
   // setup Leds
   setupLeds();
@@ -46,7 +60,9 @@ void setup() {
   addShowTasks();
 
 #ifdef DEBUG
+#ifndef HARDWARESERIAL
   Serial.println("Waiting for presence to start");
+#endif
 #endif
 
 }
@@ -76,7 +92,9 @@ void loop() {
 
 void stopAll() {
 #ifdef DEBUG
+#ifndef HARDWARESERIAL
   Serial.println("stop all");
+#endif
 #endif
   isRunning = false;
 
@@ -108,7 +126,9 @@ void presenceController() {
       presence_prev = presence;
       timer_t = 0;
 #ifdef DEBUG
+#ifndef HARDWARESERIAL
       Serial.println("starting show");
+#endif
 #endif
     }
   }
@@ -143,12 +163,16 @@ void addShowTasks() {
 
   taskid_t mainTask_t = taskManager.scheduleOnce( 0, [] {
   #ifdef DEBUG
+  #ifndef HARDWARESERIAL
     Serial.println("Setting volume to max");
+  #endif
   #endif
     myMP3.volume(30); // min 0 - 30 max
     myMP3.play(1);
-      #ifdef DEBUG
+  #ifdef DEBUG
+  #ifndef HARDWARESERIAL
     Serial.println("audio track 001.mp3 started");
+  #endif
   #endif
 	});
 
@@ -176,36 +200,4 @@ void addShowTasks() {
   mainTask_t = taskManager.scheduleOnce( (AUDIODURATION * 1000) + AUDIOSTARTDELAY, [] {
     stopAll();
 	});
-}
-
-
-void setPwmFrequency(int pin, int divisor) {
-   byte mode;
-   if(pin == 5 || pin == 6 || pin == 9 || pin == 10) {
-      switch(divisor) {
-         case 1: mode = 0x01; break;
-         case 8: mode = 0x02; break;
-         case 64: mode = 0x03; break;
-         case 256: mode = 0x04; break;
-         case 1024: mode = 0x05; break;
-         default: return;
-      }
-      if(pin == 5 || pin == 6) {
-         TCCR0B = TCCR0B & 0b11111000 | mode;
-      } else {
-         TCCR1B = TCCR1B & 0b11111000 | mode;
-      }
-   } else if(pin == 3 || pin == 11) {
-      switch(divisor) {
-         case 1: mode = 0x01; break;
-         case 8: mode = 0x02; break;
-         case 32: mode = 0x03; break;
-         case 64: mode = 0x04; break;
-         case 128: mode = 0x05; break;
-         case 256: mode = 0x06; break;
-         case 1024: mode = 0x7; break;
-         default: return;
-      }
-      TCCR2B = TCCR2B & 0b11111000 | mode;
-   }
 }
